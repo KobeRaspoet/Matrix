@@ -4,8 +4,7 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
- * an immutable object Matrix which stores a matrix
- * @immutable
+ * an mutates object Matrix which acts as a matrix
  * @invar | getRowAmount() >= 0
  * @invar | getColumnAmount() >= 0
  * @invar | getMatrixRowMajorOrder() != null
@@ -14,6 +13,7 @@ import java.util.stream.IntStream;
  * @invar | Arrays.stream(getRows()).allMatch(row -> row != null && row.length == getColumnAmount())
  */
 public class Matrix {
+	
 	
 	
 	/**
@@ -80,34 +80,32 @@ public class Matrix {
 	public Matrix(int rows, int columns, double[] elements) {throw new RuntimeException("not yet implemented");}
 	
 	/**
-	 * @inspects | this
-	 * @post | result != null
-	 * @post | result.getRowAmount() == getRowAmount()
-	 * @post | result.getColumnAmount() == getColumnAmount()
+	 * @mutates | this
+	 * @post | this != null
+	 * @post | old(this).getRowAmount() == getRowAmount()
+	 * @post | old(this).getColumnAmount() == getColumnAmount()
 	 * @post | IntStream.range(0,getRowAmount()).allMatch(i ->
 	 * 		 | 	IntStream.range(0,getColumnAmount()).allMatch(j ->
-	 * 		 |		result.getElement(i,j) == getElement(i,j)*alfa
+	 * 		 |		getElement(i,j) == old(this).getElement(i,j)*alfa
 	 * 	     |	)
 	 * 		 |)
-	 * @creates | result
-	 * 
 	 */
-	public Matrix scaled(double alfa) {throw new RuntimeException("not yet implemented");}
+	public void scale(double alfa) {throw new RuntimeException("not yet implemented");}
 	
 	/**
-	 * @inspects | this, other
+	 * @mutates | this
+	 * @inspects | this
 	 * @pre | other != null
 	 * @pre | getRowAmount() == other.getRowAmount()
 	 * @pre | getColumnAmount() == other.getColumnAmount()
-	 * @creates | result
-	 * @post | result != null
-	 * @post | result.getRowAmount() == getRowAmount()
-	 * @post | result.getColumnAmount() == getColumnAmount()
+	 * @post | this != null
+	 * @post | getRowAmount() == old(this).getRowAmount()
+	 * @post | getColumnAmount() == old(this).getColumnAmount()
 	 * @post | IntStream.range(0,getRowAmount()).allMatch(i ->
 	 * 		 | 	IntStream.range(0,getColumnAmount()).allMatch(j ->
-	 * 		 |		result.getElement(i,j) == getElement(i,j)+other.getElement(i,j)
+	 * 		 |		getElement(i,j) == old(this).getElement(i,j)+other.getElement(i,j)
 	 * 	     |	)
 	 * 		 |)
 	 */
-	public Matrix plus(Matrix other) {throw new RuntimeException("not yet implemented");}
+	public void add(Matrix other) {throw new RuntimeException("not yet implemented");}
 }
