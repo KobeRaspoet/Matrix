@@ -17,15 +17,17 @@ public class Matrix {
 	/**
 	 * @invar | rowCount >= 0
 	 * @invar | columnCount >= 0
-	 * @invar | elementsRMO != null
-	 * @invar | elementsRMO.length == rowCount*columnCount
+	 * @invar | Rows != null
+	 * @invar | Rows.length == rowCount
+	 * @invar | Arrays.stream(Rows).allMatch(row -> row.length == columnCount && row != null)
 	 */
 	private int rowCount;
 	private int columnCount;
 	/**
 	 * @representationObject
+	 * @representationObjects
 	 */
-	private double[] elementsRMO;
+	private double[][] Rows;
 	
 	/**
 	 * @inspects | this
@@ -43,11 +45,9 @@ public class Matrix {
 	 */
 	public double[][] getRows() {
 		double[][] result = new double[rowCount][columnCount];
-		for(int i = 0; i < rowCount ; i++) {
-			for(int j = 0 ; j < columnCount ; j++) {
-				result[i][j] = elementsRMO[i * columnCount + j];
-			}
-		}
+		for (int i = 0; i < rowCount; i++)
+			for (int j = 0; j < columnCount; j++)
+				result[i][j] = Rows[i][j];
 		return result;
 	}
 	
@@ -58,7 +58,7 @@ public class Matrix {
 	 * @post | result == getRows()[rowIndex][columnIndex]
 	 */
 	public double getElement(int rowIndex, int columnIndex) {
-		return elementsRMO[rowIndex * columnCount + columnIndex];
+		return Rows[rowIndex][columnIndex];
 	}
 	
 	/**
@@ -72,7 +72,13 @@ public class Matrix {
 	 * 		 |)
 	 */
 	public double[] getMatrixRowMajorOrder() {
-		return elementsRMO.clone();
+		double[] result = new double[rowCount*columnCount];
+		for(int i = 0; i < rowCount ; i++) {
+			for(int j = 0 ; j < columnCount ; j++) {
+				result[i*columnCount + j] = Rows[i][j];
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -89,7 +95,7 @@ public class Matrix {
 		double[] result = new double[rowCount*columnCount];
 		for(int i = 0; i < rowCount ; i++) {
 			for(int j = 0 ; j < columnCount ; j++) {
-				result[j*rowCount + i] = elementsRMO[i*columnCount + j]; 
+				result[j*rowCount + i] = Rows[i][j]; 
 			}
 		}
 		return result;
@@ -111,34 +117,39 @@ public class Matrix {
 	public Matrix(int rows, int columns, double[] elements) {
 		this.rowCount = rows;
 		this.columnCount = columns;
-		this.elementsRMO = elements.clone();
+		this.Rows = new double[rowCount][columnCount];
+		for(int i = 0; i < rowCount ; i++) {
+			for(int j = 0 ; j < columnCount ; j++) {
+				Rows[i][j] = elements[i*columnCount + j]; 
+			}
+		}
 	}
 	
 	/**
 	 * @mutates | this
-	 * @post | this != null
 	 * @post | old(getRowAmount()) == getRowAmount()
 	 * @post | old(getColumnAmount()) == getColumnAmount()
 	 * @post | IntStream.range(0,getRowAmount()).allMatch(i ->
 	 * 		 | 	IntStream.range(0,getColumnAmount()).allMatch(j ->
-	 * 		 |		this.getElement(i,j) == old(getRows())[i][j]*alfa
+	 * 		 |		this.getRows()[i][j] == old(getRows())[i][j]*alfa
 	 * 	     |	)
 	 * 		 |)
 	 */
 	public void scale(double alfa) {
-		for(int i = 0; i < rowCount*columnCount; i++)
-			this.elementsRMO[i] = elementsRMO[i] * alfa;
+		for(int i = 0; i < rowCount ; i++) 
+			for(int j = 0 ; j < columnCount ; j++) 
+				this.Rows[i][j] *= alfa; 
 	}
 	
 	/**
 	 * @mutates | this
-	 * @inspects | this
+	 * @inspects | other
 	 * @pre | other != null
 	 * @pre | getRowAmount() == other.getRowAmount()
 	 * @pre | getColumnAmount() == other.getColumnAmount()
 	 * @post | this != null
-	 * @post | getRowAmount() == old(this).getRowAmount()
-	 * @post | getColumnAmount() == old(this).getColumnAmount()
+	 * @post | getRowAmount() == old(getRowAmount())
+	 * @post | getColumnAmount() == old(getColumnAmount())
 	 * @post | IntStream.range(0,getRowAmount()).allMatch(i ->
 	 * 		 | 	IntStream.range(0,getColumnAmount()).allMatch(j ->
 	 * 		 |		getElement(i,j) == old(getRows())[i][j]+other.getElement(i,j)
@@ -146,8 +157,9 @@ public class Matrix {
 	 * 		 |)
 	 */
 	public void add(Matrix other) {
-		double[] elementsOther = other.getMatrixRowMajorOrder();
-		for(int i = 0; i < rowCount*columnCount; i++)
-			elementsRMO[i] += elementsOther[i];
+		double[] otherElementsRowMajor = other.getMatrixRowMajorOrder();
+		for (int i = 0; i < rowCount; i++)
+			for (int j = 0; j < columnCount; j++)
+				Rows[i][j] += otherElementsRowMajor[i * columnCount + j];
 	}
 }
