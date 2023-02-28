@@ -18,15 +18,15 @@ public class Matrix {
 	/**
 	 * @invar | rowCount >= 0
 	 * @invar | columnCount >= 0
-	 * @invar | elementsRMO != null
-	 * @invar | elementsRMO.length == rowCount*columnCount
+	 * @invar | elementsCMO != null
+	 * @invar | elementsCMO.length == rowCount*columnCount
 	 */
 	private int rowCount;
 	private int columnCount;
 	/**
 	 * @representationObject
 	 */
-	private double[] elementsRMO;
+	private double[] elementsCMO;
 	
 	/**
 	 * @inspects | this
@@ -50,7 +50,7 @@ public class Matrix {
 		double[][] result = new double[rowCount][columnCount];
 		for(int i = 0; i < rowCount ; i++) {
 			for(int j = 0 ; j < columnCount ; j++) {
-				result[i][j] = elementsRMO[i * columnCount + j];
+				result[i][j] = elementsCMO[j * rowCount + i];
 			}
 		}
 		return result;
@@ -63,7 +63,7 @@ public class Matrix {
 	 * @post | result == getRows()[rowIndex][columnIndex]
 	 */
 	public double getElement(int rowIndex, int columnIndex) {
-		return elementsRMO[rowIndex * columnCount + columnIndex];
+		return elementsCMO[columnIndex * rowCount + rowIndex];
 	}
 	
 	/**
@@ -77,7 +77,13 @@ public class Matrix {
 	 * 		 |)
 	 */
 	public double[] getMatrixRowMajorOrder() {
-		return elementsRMO.clone();
+		double[] result = new double[rowCount*columnCount];
+		for(int i = 0; i < rowCount ; i++) {
+			for(int j = 0 ; j < columnCount ; j++) {
+				result[i*columnCount + j] = elementsCMO[j*rowCount + i]; 
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -91,13 +97,7 @@ public class Matrix {
 	 * 		 |)
 	 */
 	public double[] getMatrixColumnMajorOrder() {
-		double[] result = new double[rowCount*columnCount];
-		for(int i = 0; i < rowCount ; i++) {
-			for(int j = 0 ; j < columnCount ; j++) {
-				result[j*rowCount + i] = elementsRMO[i*columnCount + j]; 
-			}
-		}
-		return result;
+		return elementsCMO.clone();
 	}
 	
 
@@ -116,7 +116,13 @@ public class Matrix {
 	public Matrix(int rows, int columns, double[] elements) {
 		this.rowCount = rows;
 		this.columnCount = columns;
-		this.elementsRMO = elements.clone();
+		elementsCMO = new double[rowCount * columnCount];
+		for(int i = 0; i < rowCount ; i++) {
+			for(int j = 0 ; j < columnCount ; j++) {
+				elementsCMO[j*rowCount + i] = elements[i*columnCount + j]; 
+			}
+		}
+		
 	}
 	
 	/**
@@ -134,8 +140,11 @@ public class Matrix {
 	 */
 	public Matrix scaled(double alfa) {
 		double[] new_elements = new double[rowCount*columnCount];
-		for(int i = 0; i < rowCount*columnCount; i++)
-			new_elements[i] = elementsRMO[i]*alfa;
+		for(int i = 0; i < rowCount ; i++) {
+			for(int j = 0 ; j < columnCount ; j++) {
+				new_elements[i*columnCount + j] = elementsCMO[j*rowCount + i]*alfa; 
+			}
+		}
 		Matrix result = new Matrix(rowCount, columnCount, new_elements.clone());
 		return result;
 		
@@ -159,8 +168,11 @@ public class Matrix {
 	public Matrix plus(Matrix other) {
 		double[] elementsOther = other.getMatrixRowMajorOrder();
 		double[] new_elements = new double[columnCount*rowCount];
-		for(int i = 0; i < rowCount*columnCount; i++)
-			new_elements[i] = elementsRMO[i]+elementsOther[i];
+		for(int i = 0; i < rowCount ; i++) {
+			for(int j = 0 ; j < columnCount ; j++) {
+				new_elements[i*columnCount + j] = elementsOther[i*columnCount + j] + elementsCMO[j*rowCount + i]; 
+			}
+		}
 		Matrix result = new Matrix(rowCount, columnCount, new_elements.clone());
 		return result;
 	}
