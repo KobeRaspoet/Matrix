@@ -14,18 +14,18 @@ class MatrixTest {
 		Matrix m1 = new Matrix(2,3,elements1);
 		Matrix m2 = new Matrix(2,3,elements2);
 		
-		assertEquals(m1.getColumnAmount(), 3);
-		assertEquals(m1.getRowAmount(), 2);
+		assertEquals(3, m1.getColumnAmount());
+		assertEquals(2, m1.getRowAmount());
 		assertEquals(m1.getElement(0,1), 2.2);
 		assertArrayEquals(m1.getMatrixColumnMajorOrder(), new double[] {1.2, 1, 2.2, 2, 3.2, 3});
 		assertArrayEquals(m1.getMatrixRowMajorOrder(), new double[] {1.2, 2.2, 3.2, 1, 2 ,3});
 		assertArrayEquals(m1.getRows(), new double[][] {{1.2, 2.2, 3.2}, {1, 2 ,3}});
 		
-		Matrix m3 = m1.scaled(1.5);
+		Matrix m3 = m1.scaled(10);
 		assertEquals(m1.getColumnAmount(), 3);
 		assertEquals(m1.getRowAmount(), 2);
 		assertEquals(m1.getElement(0,1), 2.2);
-		assertArrayEquals(m3.getRows(), new double[][] {{1.8, 3.3, 4.8}, {1.5, 3 ,4.5}});
+		assertArrayEquals(m3.getRows(), new double[][] {{12, 22, 32}, {10, 20 ,30}});
 		
 		Matrix m4 = m1.plus(m2);
 		assertEquals(m1.getColumnAmount(), 3);

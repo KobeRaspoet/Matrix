@@ -15,30 +15,56 @@ import java.util.stream.IntStream;
  */
 public class Matrix {
 	
+	/**
+	 * @invar | rowCount >= 0
+	 * @invar | columnCount >= 0
+	 * @invar | elementsRMO != null
+	 * @invar | elementsRMO.length == rowCount*columnCount
+	 */
+	private int rowCount;
+	private int columnCount;
+	/**
+	 * @representationObject
+	 */
+	private double[] elementsRMO;
 	
 	/**
 	 * @inspects | this
 	 */
-	public int getRowAmount() {throw new RuntimeException("not yet implemented");}
+	public int getRowAmount() {
+		return rowCount;
+		}
 	
 	/**
 	 * @inspects | this
 	 */
-	public int getColumnAmount() {throw new RuntimeException("not yet implemented");}
+	public int getColumnAmount() {
+		return columnCount;
+		}
 	
 	/**
 	 * @creates | result, ...result
 	 * @post | result.length == getRowAmount()
 	 */
-	public double[][] getRows() {throw new RuntimeException("not yet implemented");}
+	public double[][] getRows() {
+		double[][] result = new double[rowCount][columnCount];
+		for(int i = 0; i < rowCount ; i++) {
+			for(int j = 0 ; j < columnCount ; j++) {
+				result[i][j] = elementsRMO[i * columnCount + j];
+			}
+		}
+		return result;
+		}
 	
 	/**
 	 * @pre | 0 <= rowIndex && rowIndex < getRowAmount()
-	 * @pre | 0 <= columnIndex && columnIndex < getRowAmount()
+	 * @pre | 0 <= columnIndex && columnIndex < getColumnAmount()
 	 * @inspects | this
 	 * @post | result == getRows()[rowIndex][columnIndex]
 	 */
-	public double getElement(int rowIndex, int columnIndex) {throw new RuntimeException("not yet implemented");}
+	public double getElement(int rowIndex, int columnIndex) {
+		return elementsRMO[rowIndex * columnCount + columnIndex];
+	}
 	
 	/**
 	 * @creates | result
@@ -50,7 +76,9 @@ public class Matrix {
 	 * 	     |	)
 	 * 		 |)
 	 */
-	public double[] getMatrixRowMajorOrder() {throw new RuntimeException("not yet implemented");}
+	public double[] getMatrixRowMajorOrder() {
+		return elementsRMO.clone();
+	}
 	
 	/**
 	 * @creates | result
@@ -62,7 +90,15 @@ public class Matrix {
 	 * 	     |	)
 	 * 		 |)
 	 */
-	public double[] getMatrixColumnMajorOrder() {throw new RuntimeException("not yet implemented");}
+	public double[] getMatrixColumnMajorOrder() {
+		double[] result = new double[rowCount*columnCount];
+		for(int i = 0; i < rowCount ; i++) {
+			for(int j = 0 ; j < columnCount ; j++) {
+				result[j*rowCount + i] = elementsRMO[i*columnCount + j]; 
+			}
+		}
+		return result;
+	}
 	
 
 	
@@ -77,7 +113,11 @@ public class Matrix {
 	 * @post | getColumnAmount() == columns
 	 * @post | Arrays.equals(elements, getMatrixRowMajorOrder())
 	 */
-	public Matrix(int rows, int columns, double[] elements) {throw new RuntimeException("not yet implemented");}
+	public Matrix(int rows, int columns, double[] elements) {
+		this.rowCount = rows;
+		this.columnCount = columns;
+		this.elementsRMO = elements.clone();
+	}
 	
 	/**
 	 * @inspects | this
@@ -92,7 +132,14 @@ public class Matrix {
 	 * @creates | result
 	 * 
 	 */
-	public Matrix scaled(double alfa) {throw new RuntimeException("not yet implemented");}
+	public Matrix scaled(double alfa) {
+		double[] new_elements = new double[rowCount*columnCount];
+		for(int i = 0; i < rowCount*columnCount; i++)
+			new_elements[i] = elementsRMO[i]*alfa;
+		Matrix result = new Matrix(rowCount, columnCount, new_elements.clone());
+		return result;
+		
+	}
 	
 	/**
 	 * @inspects | this, other
@@ -109,5 +156,12 @@ public class Matrix {
 	 * 	     |	)
 	 * 		 |)
 	 */
-	public Matrix plus(Matrix other) {throw new RuntimeException("not yet implemented");}
+	public Matrix plus(Matrix other) {
+		double[] elementsOther = other.getMatrixRowMajorOrder();
+		double[] new_elements = new double[columnCount*rowCount];
+		for(int i = 0; i < rowCount*columnCount; i++)
+			new_elements[i] = elementsRMO[i]+elementsOther[i];
+		Matrix result = new Matrix(rowCount, columnCount, new_elements.clone());
+		return result;
+	}
 }
